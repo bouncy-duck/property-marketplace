@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Marketplace</title>
+    <style>
+        /* CSS Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .dashboard {
+            display: flex;
+            background-color: #2c3e50;
+            padding: 15px 0;
+        }
+
+        .dashboard a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .dashboard a:hover {
+            background-color: #34495e;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2, h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .property-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .property-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .property-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .property-image {
+            height: 200px;
+            background-color: #eee;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .property-details {
+            padding: 15px;
+        }
+
+        .property-price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #e74c3c;
+            margin: 10px 0;
+        }
+
+        .property-contact {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .error {
+            color: #e74c3c;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .success {
+            color: #2ecc71;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+
+        .user-greeting {
+            color: white;
+            margin-left: auto;
+            padding: 10px 20px;
+            display: none;
+        }
+
+        .logout-btn {
+            background-color: #e74c3c;
+            margin-left: 10px;
+        }
+
+        .logout-btn:hover {
+            background-color: #c0392b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Dashboard Navigation -->
+    <div class="dashboard">
+        <a href="#" onclick="showSection('home')">Home</a>
+        <a href="#" onclick="showSection('register')" id="register-link">Register</a>
+        <a href="#" onclick="showSection('signin')" id="signin-link">Sign In</a>
+        <a href="#" onclick="showSection('sell')" id="sell-link">Sell</a>
+        <a href="#" onclick="showSection('buy')">Buy</a>
+        <div class="user-greeting" id="user-greeting">
+            Welcome, <span id="username-display"></span>
+            <button class="logout-btn" onclick="handleLogout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Content Container -->
+    <div class="container">
+        <!-- Home Section -->
+        <section id="home-section">
+            <h1>Welcome to Property Marketplace</h1>
+            <p>Find your dream property or sell your current one with our easy-to-use platform.</p>
+            <p>Our marketplace connects buyers and sellers in a secure and efficient way. Browse properties, contact sellers directly, or list your own property for sale.</p>
+            <h2>Featured Properties</h2>
+            <div class="property-list" id="featured-properties">
+                <!-- Featured properties will be loaded here -->
+            </div>
+        </section>
+
+        <!-- Register Section -->
+        <section id="register-section" class="hidden">
+            <h2>Create an Account</h2>
+            <div id="register-message"></div>
+            <form id="register-form">
+                <div class="form-group">
+                    <label for="register-email">Email</label>
+                    <input type="email" id="register-email" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-username">Username</label>
+                    <input type="text" id="register-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-password">Password</label>
+                    <input type="password" id="register-password" required>
+                </div>
+                <div class="form-group">
+                    <label for="register-confirm">Confirm Password</label>
+                    <input type="password" id="register-confirm" required>
+                    <div id="register-password-error" class="error"></div>
+                </div>
+                <button type="submit">Register</button>
+            </form>
+            <p>Already have an account? <a href="#" onclick="showSection('signin')">Sign in here</a></p>
+        </section>
+
+        <!-- Sign In Section -->
+        <section id="signin-section" class="hidden">
+            <h2>Sign In</h2>
+            <div id="signin-message"></div>
+            <form id="signin-form">
+                <div class="form-group">
+                    <label for="signin-username">Username</label>
+                    <input type="text" id="signin-username" required>
+                </div>
+                <div class="form-group">
+                    <label for="signin-password">Password</label>
+                    <input type="password" id="signin-password" required>
+                </div>
+                <button type="submit">Sign In</button>
+            </form>
+            <p>Don't have an account? <a href="#" onclick="showSection('register')">Register here</a></p>
+        </section>
+
+        <!-- Sell Section -->
+        <section id="sell-section" class="hidden">
+            <h2>Sell Your Property</h2>
+            <div id="sell-message"></div>
+            <form id="sell-form">
+                <div class="form-group">
+                    <label for="property-title">Property Title</label>
+                    <input type="text" id="property-title" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-description">Description</label>
+                    <textarea id="property-description" rows="5" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="property-type">Property Type</label>
+                    <select id="property-type" required>
+                        <option value="">Select type</option>
+                        <option value="house">House</option>
+                        <option value="apartment">Apartment</option>
+                        <option value="land">Land</option>
+                        <option value="commercial">Commercial</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="property-bedrooms">Bedrooms</label>
+                    <input type="number" id="property-bedrooms" min="0">
+                </div>
+                <div class="form-group">
+                    <label for="property-bathrooms">Bathrooms</label>
+                    <input type="number" id="property-bathrooms" min="0" step="0.5">
+                </div>
+                <div class="form-group">
+                    <label for="property-area">Area (sq ft)</label>
+                    <input type="number" id="property-area" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-location">Location</label>
+                    <input type="text" id="property-location" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-price">Price ($)</label>
+                    <input type="number" id="property-price" min="0" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-contact">Contact Email</label>
+                    <input type="email" id="property-contact" required>
+                </div>
+                <div class="form-group">
+                    <label for="property-phone">Contact Phone</label>
+                    <input type="tel" id="property-phone">
+                </div>
+                <div class="form-group">
+                    <label for="property-image">Property Image URL</label>
+                    <input type="url" id="property-image" placeholder="https://example.com/image.jpg">
+                </div>
+                <button type="submit">List Property</button>
+            </form>
+        </section>
+
+        <!-- Buy Section -->
+        <section id="buy-section" class="hidden">
+            <h2>Available Properties</h2>
+            <div class="property-list" id="all-properties">
+                <!-- All properties will be loaded here -->
+            </div>
+        </section>
+    </div>
+
+    <a href="#" onclick="showSection('my-properties')" id="my-properties-link">My Properties</a>
+
+<section id="my-properties-section" class="hidden">
+    <h2>My Listed Properties</h2>
+    <div class="property-list" id="my-properties">
+        <!-- User's properties will be loaded here -->
+    </div>
+</section>
+
+    <script>
+        // JavaScript for the Property Marketplace with MongoDB backend
+        const API_BASE_URL = 'http://localhost:5000/api'; // Defined globally
+    let currentUser = null; // User state
+
+    document.addEventListener('DOMContentLoaded', function() {
+        // Show home section by default
+        showSection('home');
+        
+        // Check if user is already logged in
+        checkAuthStatus();
+        
+        // Load properties from backend
+        loadProperties();
+        
+        // Set up form event listeners
+        document.getElementById('register-form').addEventListener('submit', handleRegister);
+        document.getElementById('signin-form').addEventListener('submit', handleSignIn);
+        document.getElementById('sell-form').addEventListener('submit', handleSell);
+        
+        // Password confirmation validation
+        document.getElementById('register-confirm').addEventListener('input', validatePassword);
+    });
+        // User state
+
+        // Check authentication status
+        function checkAuthStatus() {
+            // In a real app, you would check for a valid session/token
+            // For this demo, we'll just check if currentUser is set
+            updateAuthUI();
+        }
+
+        // Update UI based on authentication status
+        function updateAuthUI() {
+            const userGreeting = document.getElementById('user-greeting');
+            const registerLink = document.getElementById('register-link');
+            const signinLink = document.getElementById('signin-link');
+            const sellLink = document.getElementById('sell-link');
+            
+            if (currentUser) {
+                userGreeting.style.display = 'flex';
+                document.getElementById('username-display').textContent = currentUser.username;
+                registerLink.style.display = 'none';
+                signinLink.style.display = 'none';
+                sellLink.style.display = 'inline-block';
+            } else {
+                userGreeting.style.display = 'none';
+                registerLink.style.display = 'inline-block';
+                signinLink.style.display = 'inline-block';
+                sellLink.style.display = 'none';
+            }
+        }
+
+        // Show the requested section and hide others
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('section').forEach(section => {
+                section.classList.add('hidden');
+            });
+            
+            // Show the requested section
+            document.getElementById(`${sectionId}-section`).classList.remove('hidden');
+            
+            // If showing buy section, refresh properties
+            if (sectionId === 'buy') {
+                displayAllProperties();
+            }
+
+            if (sectionId === 'my-properties') {
+        loadMyProperties();
+    }
+        }
+
+        // Load properties from backend
+        async function loadProperties() {
+            try {
+                // Load featured properties for home page
+                const featuredResponse = await fetch(`${API_BASE_URL}/properties/featured`);
+                const featuredProperties = await featuredResponse.json();
+                displayFeaturedProperties(featuredProperties);
+                
+                // Load all properties for buy page
+                const allResponse = await fetch(`${API_BASE_URL}/properties`);
+                const allProperties = await allResponse.json();
+                displayAllProperties(allProperties);
+            } catch (error) {
+                console.error('Error loading properties:', error);
+            }
+        }
+
+        // Display featured properties on home page
+        function displayFeaturedProperties(properties) {
+            const featuredContainer = document.getElementById('featured-properties');
+            featuredContainer.innerHTML = '';
+            
+            properties.forEach(property => {
+                featuredContainer.appendChild(createPropertyCard(property));
+            });
+        }
+
+        // Display all properties on buy page
+        function displayAllProperties(properties) {
+            const allContainer = document.getElementById('all-properties');
+            allContainer.innerHTML = '';
+            
+            properties.forEach(property => {
+                allContainer.appendChild(createPropertyCard(property));
+            });
+        }
+
+        async function loadMyProperties() {
+    if (!currentUser) {
+        document.getElementById('my-properties').innerHTML = '<p>Please sign in to view your properties</p>';
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/properties?seller=${currentUser.username}`);
+        const properties = await response.json();
+        
+        const container = document.getElementById('my-properties');
+        container.innerHTML = '';
+        
+        if (properties.length === 0) {
+            container.innerHTML = '<p>You have no listed properties</p>';
+            return;
+        }
+        
+        properties.forEach(property => {
+            container.appendChild(createPropertyCard(property));
+        });
+    } catch (error) {
+        console.error('Error loading properties:', error);
+    }
+}
+
+        // Create a property card element
+        function createPropertyCard(property) {
+            const card = document.createElement('div');
+            card.className = 'property-card';
+            
+            const imageDiv = document.createElement('div');
+            imageDiv.className = 'property-image';
+            imageDiv.style.backgroundImage = `url(${property.image || 'https://via.placeholder.com/300x200?text=Property+Image'})`;
+            
+            const detailsDiv = document.createElement('div');
+            detailsDiv.className = 'property-details';
+            
+            const title = document.createElement('h3');
+            title.textContent = property.title;
+            
+            const type = document.createElement('p');
+            type.textContent = `${property.type.charAt(0).toUpperCase() + property.type.slice(1)} • ${property.location}`;
+            
+            const price = document.createElement('div');
+            price.className = 'property-price';
+            price.textContent = `$${property.price.toLocaleString()}`;
+            
+            const desc = document.createElement('p');
+            desc.textContent = property.description;
+            
+            const specs = document.createElement('p');
+            specs.textContent = `${property.bedrooms} beds • ${property.bathrooms} baths • ${property.area} sq ft`;
+            
+            const contact = document.createElement('div');
+            contact.className = 'property-contact';
+            contact.innerHTML = `<strong>Contact:</strong> ${property.contact} ${property.phone ? `• ${property.phone}` : ''}`;
+            
+            detailsDiv.appendChild(title);
+            detailsDiv.appendChild(type);
+            detailsDiv.appendChild(price);
+            detailsDiv.appendChild(specs);
+            detailsDiv.appendChild(desc);
+            detailsDiv.appendChild(contact);
+            
+            card.appendChild(imageDiv);
+            card.appendChild(detailsDiv);
+
+            if (currentUser && currentUser.username === property.seller) {
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.style.backgroundColor = '#e74c3c';
+        deleteBtn.style.marginTop = '10px';
+        deleteBtn.onclick = () => deleteProperty(property._id || property.id);
+        detailsDiv.appendChild(deleteBtn);
+    }
+            
+            return card;
+        }
+
+        // Handle user registration
+        async function handleRegister(e) {
+    e.preventDefault();
+    
+    const email = document.getElementById('register-email').value;
+    const username = document.getElementById('register-username').value;
+    const password = document.getElementById('register-password').value;
+    const confirm = document.getElementById('register-confirm').value;
+    
+    // Validate password match
+    if (password !== confirm) {
+        document.getElementById('register-password-error').textContent = "Passwords do not match";
+        return;
+    }
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email, username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.message || 'Registration failed');
+        }
+        
+        // Show success message
+        document.getElementById('register-message').textContent = "Registration successful! You can now sign in.";
+        document.getElementById('register-message').className = 'success';
+        
+        // Clear form
+        document.getElementById('register-form').reset();
+    } catch (error) {
+        document.getElementById('register-message').textContent = error.message;
+        document.getElementById('register-message').className = 'error';
+    }
+}
+
+        // Handle user sign in
+        async function handleSignIn(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('signin-username').value;
+            const password = document.getElementById('signin-password').value;
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Login failed');
+                }
+                
+                // Set current user
+                currentUser = data.user;
+                updateAuthUI();
+                
+                document.getElementById('signin-message').textContent = `Welcome back, ${currentUser.username}!`;
+                document.getElementById('signin-message').className = 'success';
+                
+                // Clear form
+                document.getElementById('signin-form').reset();
+                
+                // Redirect to home after 1 second
+                setTimeout(() => showSection('home'), 1000);
+            } catch (error) {
+                document.getElementById('signin-message').textContent = error.message;
+                document.getElementById('signin-message').className = 'error';
+            }
+        }
+
+        // Handle property listing
+        async function handleSell(e) {
+            e.preventDefault();
+            
+            if (!currentUser) {
+                document.getElementById('sell-message').textContent = "Please sign in to list a property";
+                document.getElementById('sell-message').className = 'error';
+                showSection('signin');
+                return;
+            }
+            
+            try {
+                const propertyData = {
+                    title: document.getElementById('property-title').value,
+                    description: document.getElementById('property-description').value,
+                    type: document.getElementById('property-type').value,
+                    bedrooms: parseInt(document.getElementById('property-bedrooms').value) || 0,
+                    bathrooms: parseFloat(document.getElementById('property-bathrooms').value) || 0,
+                    area: parseInt(document.getElementById('property-area').value),
+                    location: document.getElementById('property-location').value,
+                    price: parseInt(document.getElementById('property-price').value),
+                    contact: document.getElementById('property-contact').value,
+                    phone: document.getElementById('property-phone').value,
+                    image: document.getElementById('property-image').value,
+                    seller: currentUser.username
+                };
+                
+                const response = await fetch(`${API_BASE_URL}/properties`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(propertyData)
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.message || 'Failed to list property');
+                }
+                
+                // Show success message
+                document.getElementById('sell-message').textContent = "Property listed successfully!";
+                document.getElementById('sell-message').className = 'success';
+                
+                // Clear form
+                document.getElementById('sell-form').reset();
+                
+                // Reload properties
+                loadProperties();
+            } catch (error) {
+                document.getElementById('sell-message').textContent = error.message;
+                document.getElementById('sell-message').className = 'error';
+            }
+        }
+
+        // Handle user logout
+        function handleLogout() {
+            currentUser = null;
+            updateAuthUI();
+            showSection('home');
+        }
+
+        //Handle property deletion
+        async function deleteProperty(propertyId) {
+    if (!currentUser) {
+        alert('Please sign in to delete properties');
+        showSection('signin');
+        return;
+    }
+
+    if (!confirm('Are you sure you want to delete this property?')) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/properties/${propertyId}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username: currentUser.username })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.message || 'Failed to delete property');
+        }
+
+        alert('Property deleted successfully');
+        loadProperties(); // Refresh the property list
+    } catch (error) {
+        alert(error.message);
+    }
+}
+
+        // Validate password confirmation
+        function validatePassword() {
+            const password = document.getElementById('register-password').value;
+            const confirm = document.getElementById('register-confirm').value;
+            
+            if (password !== confirm) {
+                document.getElementById('register-password-error').textContent = "Passwords do not match";
+            } else {
+                document.getElementById('register-password-error').textContent = "";
+            }
+        }
+    </script>
+</body>
+</html>
