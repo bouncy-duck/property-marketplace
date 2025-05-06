@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 const allowedOrigins = [
-  'https://bouncy-duck.github.io/property-marketplace/#', // Your GitHub Pages
+  'https://bouncy-duck.github.io', // Your GitHub Pages
   'http://localhost:3000',         // For local development
   'http://localhost:5000'          // If testing backend directly
 ];
