@@ -132,6 +132,17 @@ app.get('/api/properties/featured', async (req, res) => {
     }
 });
 
+// Ensure all API routes set proper Content-Type
+app.get('/api/properties', async (req, res) => {
+  try {
+    const properties = await Property.find();
+    res.set('Content-Type', 'application/json');
+    res.json(properties);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Add New Property
 app.post('/api/properties', async (req, res) => {
     try {
