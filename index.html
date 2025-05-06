@@ -531,6 +531,23 @@
   }
 }
 
+        // Temporary test in your frontend code
+async function testConnection() {
+  try {
+    const response = await fetch('https://property-marketplace-tlx7.onrender.com');
+    console.log('Connection test:', {
+      status: response.status,
+      statusText: response.statusText,
+      headers: [...response.headers.entries()]
+    });
+    const text = await response.text();
+    console.log('Response text:', text);
+  } catch (error) {
+    console.error('Connection test failed:', error);
+  }
+}
+testConnection();
+
         // Handle user registration
         async function handleRegister(e) {
     e.preventDefault();
