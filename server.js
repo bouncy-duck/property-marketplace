@@ -11,6 +11,10 @@ const allowedOrigins = [
   'http://localhost:5000'          // If testing backend directly
 ];
 
+// Add this near the top of your server.js
+app.use(express.json()); // For parsing application/json
+app.use(express.urlencoded({ extended: true })); // For form data
+
 // CORS configuration
 app.use(cors({
   origin: function (origin, callback) {
