@@ -511,6 +511,25 @@
             return card;
         }
 
+        async function fetchProperties() {
+  try {
+    const response = await fetch('https://property-marketplace-tlx7.onrender.com/api/properties');
+    
+    // Check if response is JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      const text = await response.text();
+      throw new Error(`Expected JSON but got: ${text.substring(0, 100)}...`);
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Failed to fetch properties:', error);
+    // Fallback or retry logic here
+  }
+}
+
         // Handle user registration
         async function handleRegister(e) {
     e.preventDefault();
