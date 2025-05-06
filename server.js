@@ -1,5 +1,4 @@
 const express = require('express');
-const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 
@@ -11,12 +10,12 @@ app.use(cors());
 app.use(bodyParser.json());
 
 // MongoDB Connection
-mongoose.connect('mongodb+srv://100101supremo:J1ECYOtWqxIiPOVq@real-estate-db.mil4czj.mongodb.net/?retryWrites=true&w=majority&appName=real-estate-db', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-})
-.then(() => console.log('Connected to MongoDB'))
-.catch(err => console.error('MongoDB connection error:', err));
+require('dotenv').config(); // Load .env file (if local)
+const mongoose = require('mongoose');
+
+mongoose.connect(process.env.MONGODB_URL) // ✅ Uses the env variable
+  .then(() => console.log('Connected to MongoDB Atlas'))
+  .catch(err => console.error('Connection error:', err));
 
 // User Schema and Model
 const userSchema = new mongoose.Schema({
